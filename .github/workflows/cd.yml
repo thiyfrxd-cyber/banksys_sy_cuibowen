@@ -80,6 +80,12 @@ jobs:
             # Stop old container first to free its port
             docker rm -f banksys_sy_cuibowen 2>/dev/null || true
 
+            # Debug: show what's using our target ports
+            echo '>> Current port usage in 8888-8894:'
+            ss -ltnH 2>/dev/null | grep -E ':(888[89]|889[0-4]) ' || echo '  (none from ss)'
+            echo '>> Current docker containers:'
+            docker ps --format '{{.Names}} {{.Ports}}' 2>/dev/null || echo '  (none)'
+
             # Find available port
             HOST_PORT=''
             for p in 8888 8889 8890 8891 8892 8893 8894; do
