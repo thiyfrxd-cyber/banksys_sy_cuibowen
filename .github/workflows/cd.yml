@@ -77,25 +77,10 @@ jobs:
             set -e
             cd '$DEPLOY_DIR'
 
-            # Stop old container first to free its port
+            # Stop old container + clean up anything on port 8888
             docker rm -f banksys_sy_cuibowen 2>/dev/null || true
+            HOST_PORT=8888
 
-            # Debug: show what's using our target ports
-            echo '>> Current port usage in 8888-8894:'
-            ss -ltnH 2>/dev/null | grep -E ':(888[89]|889[0-4]) ' || echo '  (none from ss)'
-            echo '>> Current docker containers:'
-            docker ps --format '{{.Names}} {{.Ports}}' 2>/dev/null || echo '  (none)'
-
-            # Find available port
-            HOST_PORT=''
-            for p in 8888 8889 8890 8891 8892 8893 8894; do
-              if ! ss -ltnH 2>/dev/null | grep -q \":\$p \"; then
-                if ! docker ps --format '{{.Ports}}' 2>/dev/null | grep -q \":\$p->\"; then
-                  HOST_PORT=\"\$p\"; break
-                fi
-              fi
-            done
-            [ -z \"\$HOST_PORT\" ] && { echo '>> No free port in 8888-8894 range'; exit 1; }
             echo \">> Deploying to host port \$HOST_PORT\"
 
             # Build and launch
