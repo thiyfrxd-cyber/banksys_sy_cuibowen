@@ -10,71 +10,84 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v1
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        run: |
+          set -e
+          HOST="${{ secrets.SSH_HOST }}"
+          USER="${{ secrets.SSH_USER }}"
+
+          # Add host key to known_hosts (skip host key checking for automation)
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          # ── 1. Clone or pull repo ──
+          DEPLOY_DIR="/opt/banksys"
+          REPO_URL="git@github.com:thiyfrxd-cyber/banksys_sy_cuibowen.git"
+
+          ssh ${USER}@${HOST} "
             set -e
-
-            # ── 1. Clone or pull repo ──
-            DEPLOY_DIR="/opt/banksys"
-            REPO_URL="git@github.com:thiyfrxd-cyber/banksys_sy_cuibowen.git"
-
-            if [ -d "$DEPLOY_DIR/.git" ]; then
-              echo ">> Pulling latest code..."
-              cd "$DEPLOY_DIR"
-              git config --global --add safe.directory "$DEPLOY_DIR"
+            if [ -d '$DEPLOY_DIR/.git' ]; then
+              echo '>> Pulling latest code...'
+              cd '$DEPLOY_DIR'
+              git config --global --add safe.directory '$DEPLOY_DIR'
               git pull origin main
             else
-              echo ">> Cloning repository..."
-              rm -rf "$DEPLOY_DIR"
-              git clone "$REPO_URL" "$DEPLOY_DIR"
-              cd "$DEPLOY_DIR"
+              echo '>> Cloning repository...'
+              rm -rf '$DEPLOY_DIR'
+              git clone '$REPO_URL' '$DEPLOY_DIR'
             fi
+          "
 
-            # ── 2. Find available host port ──
+          # ── 2. Docker build and deploy ──
+          ssh ${USER}@${HOST} "
+            set -e
+            cd '$DEPLOY_DIR'
+
+            # Find available host port
             port_in_use() {
-              ss -ltnH 2>/dev/null | grep -q ":$1 " && return 0
-              docker ps --format "{{.Ports}}" 2>/dev/null | grep -q ":$1->" && return 0
+              ss -ltnH 2>/dev/null | grep -q \":\$1 \" && return 0
+              docker ps --format '{{.Ports}}' 2>/dev/null | grep -q \":\$1->\" && return 0
               return 1
             }
 
-            HOST_PORT=""
-            for p in $(seq 8888 8894); do
-              if ! port_in_use "$p"; then
-                HOST_PORT="$p"
+            HOST_PORT=''
+            for p in \$(seq 8888 8894); do
+              if ! port_in_use \"\$p\"; then
+                HOST_PORT=\"\$p\"
                 break
               fi
             done
-            [ -z "$HOST_PORT" ] && { echo ">> No free port in 8888-8894 range"; exit 1; }
-            echo ">> Deploying to host port $HOST_PORT"
+            [ -z \"\$HOST_PORT\" ] && { echo '>> No free port in 8888-8894 range'; exit 1; }
+            echo \">> Deploying to host port \$HOST_PORT\"
 
-            # ── 3. Docker build ──
+            # Docker build
             docker build \
               --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
               -t banksys_sy_cuibowen:latest \
-              "$DEPLOY_DIR"
+              .
 
-            # ── 4. Replace old container (idempotent) ──
+            # Replace old container
             docker rm -f banksys_sy_cuibowen 2>/dev/null || true
             docker run -d \
               --name banksys_sy_cuibowen \
               --restart unless-stopped \
-              -p ${HOST_PORT}:8501 \
+              -p \${HOST_PORT}:8501 \
               banksys_sy_cuibowen:latest
 
-            # ── 5. Health check ──
+            # Health check
             sleep 5
-            for i in $(seq 1 6); do
-              if curl -fsS "http://localhost:${HOST_PORT}/_stcore/health"; then
-                echo ">> Deploy SUCCESS: http://${{ secrets.SSH_HOST }}:${HOST_PORT}"
+            for i in \$(seq 1 6); do
+              if curl -fsS http://localhost:\${HOST_PORT}/_stcore/health; then
+                echo \">> Deploy SUCCESS: http://\$(hostname -I | awk '{print \$1}'):\${HOST_PORT}\"
                 exit 0
               fi
-              echo ">> Health check attempt $i/6 failed, retrying..."
+              echo \">> Health check attempt \$i/6 failed, retrying...\"
               sleep 5
             done
-            echo ">> Health check FAILED after 6 attempts"
+            echo '>> Health check FAILED after 6 attempts'
             exit 1
+          "
