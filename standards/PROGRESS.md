@@ -8,15 +8,13 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**: `✋ 确认门 5 — PR #1 CI 全绿，等待人工 Review + Merge`
+- **阶段**: `✅ US-1 完成 — CD 部署成功，准备进入 US-2`
 - **仓库**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen（PUBLIC）
-- **PR**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen/pull/1
-- **CI**: ✅ 全绿（ruff format / ruff check / pytest 10 passed / docker build）
-- **开发策略**: 按六步交付流程逐模块推进
-- **上一步完成**: 
-  - ①~⑤ 全部完成（建仓 → 分支 → 开发 → 本地自检 → PR → CI 绿）
-- **下一步**: **人工 Review + Merge**（AI 不得自行合并）→ CD 自动部署 → 验证端口 8888 健康检查
-- **阻塞项**: 等待人工审核合并
+- **部署**: http://117.72.172.21:8888 ✅ 健康检查通过
+- **开发策略**: 按六步交付流程逐模块推进，下一步 US-2 数据加载模块
+- **上一步完成**: US-1 完整六步流程（建仓→分支→开发→自检→PR→CI→CD）全部通过
+- **下一步**: 开 `feature/2-data-loader` 分支，实现 US-2 数据加载模块
+- **阻塞项**: 无
 
 ---
 
@@ -88,15 +86,34 @@
 ## 已知坑 (GOTCHAS)
 
 - **坑-001**: Docker 构建时 `No module named app.ml.train`（已修复）
-  - 现象: CI docker build 失败，`/usr/local/bin/python: No module named app.ml.train`
-  - 根因: Dockerfile 写死了 `RUN python -m app.ml.train --overwrite`，但 US-1 阶段训练模块尚未实现（US-4 才做）
-  - 解决: 暂时注释训练步骤，改为 `RUN mkdir -p app/ml/model` 占位；US-4 实现后恢复
-  - 验证: CI docker build 成功（run 30741490568）
+  - 现象: CI docker build 失败
+  - 根因: Dockerfile 写死了训练步骤，但 US-1 阶段训练模块未实现
+  - 解决: 暂时注释，US-4 恢复
+  - 验证: CI docker build 成功
+
+- **坑-002**: appleboy/ssh-action 与 ED25519 密钥不兼容（已修复）
+  - 现象: `ssh: short read` → `handshake failed: unable to authenticate`
+  - 根因: drone-ssh 工具无法解析 ED25519 OpenSSH 格式密钥
+  - 解决: 换用原生 `ssh -i` 命令 + `webfactory/ssh-agent`，后改为直接 `ssh -i keyfile`
+  - 验证: SSH 认证成功（run 30745477268）
+
+- **坑-003**: SSH 密钥文件必须保留末尾换行符（已修复）
+  - 现象: `Load key "deploy_key": error in libcrypto`
+  - 根因: `printf '%s'` 去掉了密钥末尾 `\n`，OpenSSH 无法解析
+  - 解决: 改用 `printf '%s\n'`，密钥从 410B/6行 → 411B/7行
+  - 验证: 密钥加载成功，`ssh-keygen -lf` 正常输出指纹
+
+- **坑-004**: 多次失败部署残留容器占满端口（已修复）
+  - 现象: 所有端口 8888-8894 均被占用，新容器无法启动
+  - 根因: 早期 CD 失败时容器未被清理，7 个端口全被旧容器占用
+  - 解决: 部署前先 `docker ps -q --filter publish=N` 清理占用端口的容器
+  - 验证: CD 成功部署到端口 8888
 
 ---
 
 ## 里程碑 (DONE)
 
 - [x] 2026-08-02：填写项目规范文档（00-project-context / 01-requirements / PROGRESS）
+- [x] 2026-08-02：US-1 完成 — 完整 CI/CD 流水线跑通，部署 http://117.72.172.21:8888
 
 > 反臃肿：里程碑超过 15 条时，把更早内容合并成一行摘要，保持本文件可快速阅读。
