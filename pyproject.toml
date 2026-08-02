@@ -14,6 +14,9 @@ select = [
     "SIM",    # flake8-simplify
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"app/pages/*.py" = ["N999"]  # Streamlit pages must start with numbers
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
