@@ -28,6 +28,18 @@ jobs:
 
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
+          # Show key fingerprint for comparison
+          echo ">> Deploy key fingerprint:"
+          ssh-keygen -lf ~/.ssh/deploy_key 2>&1
+
+          echo ">> Testing SSH connection with verbose output..."
+          ssh -v -i ~/.ssh/deploy_key \
+              -o StrictHostKeyChecking=accept-new \
+              -o PasswordAuthentication=no \
+              -o IdentitiesOnly=yes \
+              -o ConnectTimeout=10 \
+              "${SSH_USER}@${SSH_HOST}" "echo SSH_OK" 2>&1 | grep -E "Offering|accepts|fingerprint|Authentication|Permission|identity|debug1:" | head -20
+
           # ── 1. Clone or pull repo ──
           DEPLOY_DIR="/opt/banksys"
           REPO_URL="git@github.com:thiyfrxd-cyber/banksys_sy_cuibowen.git"
