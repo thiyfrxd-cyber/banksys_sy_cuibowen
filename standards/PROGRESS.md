@@ -8,12 +8,13 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**: `✅ US-1~US-6 全部开发完成，4 个 PR 待审核合并`
+- **阶段**: `✅ 全部 US 完成 — 5 个 PR 已合并，CD 部署成功`
 - **仓库**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen（PUBLIC）
-- **部署**: http://117.72.172.21:8888 ✅（US-1 已验证）
-- **测试**: 75/75 passed, 91% 覆盖率, ruff 全绿
+- **部署**: **http://117.72.172.21:8888** ✅ 健康检查通过
+  - 首页导航 `/` | 数据分析 `/01_data_analysis` | 在线预测 `/02_prediction`
+- **测试**: 75/75 passed, 91% 覆盖率
 - **模型**: AUC 0.893, Accuracy 0.886, RandomForest Pipeline
-- **下一步**: 人工审核并按顺序合并 PR #2 → #3 → #4 → #5
+- **下一步**: 就绪，可演示完整 CI/CD 流程
 - **阻塞项**: 无
 
 ---
@@ -37,36 +38,36 @@
 - [x] ⑤ PR #1 已创建
 - [ ] ⑥ CI 全绿 → 人工 Review → 人工 Merge → CD 部署 → 验证端口 8888
 
-### 第二批：数据加载与预处理模块（US-2）
-- [ ] 实现 `app/models/data_loader.py`
-- [ ] 编写 `tests/test_data_loader.py`（≥80% 覆盖）
-- [ ] 提 PR + CI + Review + 合并 + CD
+### 第二批：数据加载与预处理模块（US-2）✅ 已完成
+- [x] 实现 `app/models/data_loader.py`
+- [x] 编写 `tests/test_data_loader.py`（21 tests, 98% 覆盖）
+- [x] PR #2 → CI 绿 → 合并 → CD 成功
 
-### 第三批：数据分析交互页面（US-3）⭐ 核心功能
-- [ ] 实现 `app/models/visualizer.py`（可视化逻辑与 UI 分离）
-- [ ] 实现 `app/pages/01_data_analysis.py`
-- [ ] 编写 `tests/test_visualizer.py`
-- [ ] 提 PR + CI + Review + 合并 + CD
+### 第三批：数据分析交互页面（US-3）⭐ 核心功能 ✅ 已完成
+- [x] 实现 `app/models/visualizer.py`（10 个可视化函数）
+- [x] 实现 `app/pages/01_data_analysis.py`（4 个分析维度）
+- [x] 编写 `tests/test_visualizer.py`（19 tests, 100% 覆盖）
+- [x] PR #3 → CI 绿 → 合并 → CD 成功
 
-### 第四批：模型训练脚本（US-4）
-- [ ] 实现 `app/ml/train.py`（Pipeline + 固定种子 + CLI 参数）
-- [ ] 编写 `tests/test_train.py`
-- [ ] 提 PR + CI + Review + 合并 + CD
+### 第四批：模型训练脚本（US-4）✅ 已完成
+- [x] 实现 `app/ml/train.py`（RandomForest Pipeline, AUC 0.893）
+- [x] 编写 `tests/test_train.py`（12 tests）
+- [x] PR #4 → CI 绿 → 合并 → CD 成功
 
-### 第五批：预测服务核心逻辑（US-5）
-- [ ] 实现 `app/models/predictor.py`
-- [ ] 编写 `tests/test_predictor.py`（≥80% 覆盖）
-- [ ] 提 PR + CI + Review + 合并 + CD
+### 第五批：预测服务核心逻辑（US-5）✅ 已完成
+- [x] 实现 `app/models/predictor.py`（预测 + 容错 + 特征schema）
+- [x] 编写 `tests/test_predictor.py`（13 tests, 96% 覆盖）
+- [x] PR #5 → CI 绿 → 合并 → CD 成功
 
-### 第六批：在线预测页面（US-6）⭐ 核心功能
-- [ ] 实现 `app/pages/02_prediction.py`（点选式表单 + 结果展示）
-- [ ] 与 predictor 模块集成验证
-- [ ] 提 PR + CI + Review + 合并 + CD
+### 第六批：在线预测页面（US-6）⭐ 核心功能 ✅ 已完成
+- [x] 实现 `app/pages/02_prediction.py`（点选式表单 + 概率条 + 置信度）
+- [x] 与 predictor 模块集成验证
+- [x] PR #5 → CI 绿 → 合并 → CD 成功
 
-### 第七批：健康检查 + 质量门禁完善（US-7 & US-8）
-- [ ] 确认 `/_stcore/health` 可用
-- [ ] 确认核心逻辑覆盖率 ≥80%
-- [ ] 端到端验证：数据分析页面 + 预测页面 + 健康检查
+### 第七批：健康检查 + 质量门禁完善（US-7 & US-8）✅ 已完成
+- [x] `/_stcore/health` 可用，CD 健康检查通过
+- [x] 核心逻辑覆盖率 91%（≥80%）
+- [x] 端到端验证：首页 + 数据分析 + 预测 + 健康检查
 
 ---
 
@@ -113,7 +114,9 @@
 
 ## 里程碑 (DONE)
 
-- [x] 2026-08-02：填写项目规范文档（00-project-context / 01-requirements / PROGRESS）
-- [x] 2026-08-02：US-1 完成 — 完整 CI/CD 流水线跑通，部署 http://117.72.172.21:8888
+- [x] 2026-08-02：填写项目规范文档
+- [x] 2026-08-02：US-1 完成 — CI/CD 流水线跑通，部署 http://117.72.172.21:8888
+- [x] 2026-08-02：US-2~US-6 全部完成 — 数据分析页 + 模型训练(AUC 0.893) + 在线预测
+- [x] 2026-08-02：5 个 PR 全部合并，CD 全部成功，项目就绪
 
 > 反臃肿：里程碑超过 15 条时，把更早内容合并成一行摘要，保持本文件可快速阅读。
