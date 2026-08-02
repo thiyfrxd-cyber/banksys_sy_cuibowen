@@ -1,4 +1,4 @@
-# banksys_sy_lixiaohua
+# banksys_sy_cuibowen
 
 基于银行营销数据的可视化分析与认购预测 Web 应用。
 
