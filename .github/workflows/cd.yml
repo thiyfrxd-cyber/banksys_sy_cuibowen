@@ -38,7 +38,11 @@ jobs:
               -o PasswordAuthentication=no \
               -o IdentitiesOnly=yes \
               -o ConnectTimeout=10 \
-              "${SSH_USER}@${SSH_HOST}" "echo SSH_OK" 2>&1 | grep -E "Offering|accepts|fingerprint|Authentication|Permission|identity|debug1:" | head -20
+              "${SSH_USER}@${SSH_HOST}" "echo SSH_OK" 2>&1 | grep -E "Offering|accepts|Authenticated|Permission|identity|remote software|Will attempt|Server accepts|debug1: Next" | head -10
+
+          echo ""
+          echo ">> Server host key fingerprint:"
+          ssh-keyscan -t ed25519 "${SSH_HOST}" 2>/dev/null | ssh-keygen -lf - 2>&1
 
           # ── 1. Clone or pull repo ──
           DEPLOY_DIR="/opt/banksys"
