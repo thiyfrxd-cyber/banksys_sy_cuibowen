@@ -8,7 +8,7 @@
 
 ## 1. 项目是什么
 
-- **项目名称**： `banksys_sy_lixiaohua`
+- **项目名称**： `banksys_sy_cuibowen`
 - **一句话目标**： 基于银行营销数据构建可视化分析与认购预测的 Web 应用
 - **使用者/受益者**： 银行营销团队、数据分析师、业务决策者
 - **核心功能**：
@@ -31,7 +31,7 @@
 ## 3. 目录地图
 
 ```text
-banksys_sy_lixiaohua/
+banksys_sy_cuibowen/
 ├── standards/                 # AI 项目记忆与通用规范
 ├── app/                       # 应用主目录
 │   ├── __init__.py
@@ -98,7 +98,7 @@ banksys_sy_lixiaohua/
 
 | 占位符 | 本项目取值 | 说明 |
 |---|---|---|
-| `<APP>` | `banksys_sy_lixiaohua` | 应用名/镜像名/容器名 |
+| `<APP>` | `banksys_sy_cuibowen` | 应用名/镜像名/容器名 |
 | `<DEPLOY_DIR>` | `/opt/banksys` | 服务器部署目录 |
 | `<PORT>` | `8888` | 服务端口（Streamlit 默认 8501，Docker 映射到主机 8888） |
 | `<PORT_MAX>` | `8894` | 端口回退上限 |

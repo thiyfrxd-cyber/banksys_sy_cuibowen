@@ -231,4 +231,4 @@
 - **可部署**：Dockerfile 构建时完成模型训练，镜像自包含；部署后健康检查验证。
 - **性能**：单次预测响应 <1s；页面首屏加载 <3s。
 - **端口**：服务端口固定 8888（Docker 主机端口），容器内 Streamlit 默认 8501。
-- **仓库命名**：GitHub 仓库名与 Docker 容器名均为 `banksys_sy_lixiaohua`。
+- **仓库命名**：GitHub 仓库名与 Docker 容器名均为 `banksys_sy_cuibowen`。

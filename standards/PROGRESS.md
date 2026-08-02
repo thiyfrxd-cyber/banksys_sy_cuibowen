@@ -1,4 +1,4 @@
-# PROGRESS · banksys_sy_lixiaohua 〔本项目活记忆 · 状态机〕
+# PROGRESS · banksys_sy_cuibowen 〔本项目活记忆 · 状态机〕
 
 > **作用**：这是项目的"存档点"。任意 AI、任意重启会话，读它即可知道当前做到哪、下一步做什么、踩过什么坑。
 > **更新时机**：每完成一个有意义步骤、每次会话结束前。
@@ -11,7 +11,7 @@
 - **阶段**: `第①步 — 项目规范文档已填写，等待人工确认后进入建仓`
 - **开发策略**: 按六步交付流程逐模块推进，先 US-1 建仓通 CI/CD，再依次实现 US-2~US-8
 - **上一步完成**: 已填写 `standards/00-project-context.md`、`standards/01-requirements.md`、`standards/PROGRESS.md`
-- **下一步**: 人工确认规范文档 → 第①步：创建 GitHub 仓库 `banksys_sy_lixiaohua` + 配置 Secrets
+- **下一步**: 人工确认规范文档 → 第①步：创建 GitHub 仓库 `banksys_sy_cuibowen` + 配置 Secrets
 - **阻塞项**: 等待人工确认文档内容
 
 ---
@@ -19,7 +19,7 @@
 ## 待办清单 (TODO，按优先级)
 
 ### 第一批：初始化项目工程化与 CI/CD（US-1）
-- [ ] ① 建仓 `banksys_sy_lixiaohua`（开源仓库）+ 配 GitHub Secrets（SSH_PRIVATE_KEY / SSH_HOST / SSH_USER）
+- [ ] ① 建仓 `banksys_sy_cuibowen`（开源仓库）+ 配 GitHub Secrets（SSH_PRIVATE_KEY / SSH_HOST / SSH_USER）
 - [ ] ② 开 feature 分支 `feature/1-init-project`
 - [ ] ③ 本地模块化开发：
   - [ ] 创建项目骨架（目录结构、__init__.py）
@@ -78,7 +78,7 @@
 | 2026-08-02 | 数据集进 Git，模型产物不进 Git | 教学用公开数据方便复现；模型二进制大文件不应进版本控制 |
 | 2026-08-02 | Docker 构建时训练模型（非运行时） | 镜像自包含，无需运行时再训练；避免容器启动慢 |
 | 2026-08-02 | 端口选择 8888 | 课程指定端口；Streamlit 容器内 8501，Docker 映射到主机 8888 |
-| 2026-08-02 | 仓库名与容器名均为 `banksys_sy_lixiaohua` | 与数据源项目命名一致，便于识别 |
+| 2026-08-02 | 仓库名与容器名均为 `banksys_sy_cuibowen` | 与数据源项目命名一致，便于识别 |
 
 ---
 
