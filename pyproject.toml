@@ -16,6 +16,8 @@ select = [
 
 [tool.ruff.lint.per-file-ignores]
 "app/pages/*.py" = ["N999"]  # Streamlit pages must start with numbers
+"app/ml/train.py" = ["E402", "N806"]  # sys.path setup needed; X/y sklearn convention
+"tests/test_train.py" = ["E402"]  # sys.path setup needed for test imports
 
 [tool.ruff.format]
 quote-style = "double"
