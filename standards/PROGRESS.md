@@ -8,16 +8,15 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**: `第⑤步 — PR #1 已创建，CI 运行中，等待 CI 全绿后人工 Review`
-- **仓库**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen（PUBLIC，Secrets 已配置）
-- **开发策略**: 按六步交付流程逐模块推进，先 US-1 建仓通 CI/CD，再依次实现 US-2~US-8
+- **阶段**: `✋ 确认门 5 — PR #1 CI 全绿，等待人工 Review + Merge`
+- **仓库**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen（PUBLIC）
+- **PR**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen/pull/1
+- **CI**: ✅ 全绿（ruff format / ruff check / pytest 10 passed / docker build）
+- **开发策略**: 按六步交付流程逐模块推进
 - **上一步完成**: 
-  - ①~② 建仓 + 配置 Secrets + 开 feature 分支 ✅
-  - ③ 本地模块化开发（15 个文件，6 个模块）✅
-  - ④ 本地 CI 自检（ruff format ✅ / ruff check ✅ / pytest 10/10 passed ✅）
-  - ⑤ PR #1 已创建 ✅
-- **下一步**: 等待 CI 全绿 → 人工 Review → 人工 Merge → CD 自动部署 → 验证端口 8888
-- **阻塞项**: CI 运行中
+  - ①~⑤ 全部完成（建仓 → 分支 → 开发 → 本地自检 → PR → CI 绿）
+- **下一步**: **人工 Review + Merge**（AI 不得自行合并）→ CD 自动部署 → 验证端口 8888 健康检查
+- **阻塞项**: 等待人工审核合并
 
 ---
 
@@ -88,7 +87,11 @@
 
 ## 已知坑 (GOTCHAS)
 
-> 暂无。开发过程中遇到的实际故障将记录于此，包含现象、根因、解决方案、验证结果。
+- **坑-001**: Docker 构建时 `No module named app.ml.train`（已修复）
+  - 现象: CI docker build 失败，`/usr/local/bin/python: No module named app.ml.train`
+  - 根因: Dockerfile 写死了 `RUN python -m app.ml.train --overwrite`，但 US-1 阶段训练模块尚未实现（US-4 才做）
+  - 解决: 暂时注释训练步骤，改为 `RUN mkdir -p app/ml/model` 占位；US-4 实现后恢复
+  - 验证: CI docker build 成功（run 30741490568）
 
 ---
 
