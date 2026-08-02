@@ -20,8 +20,10 @@ COPY app/ ./app/
 COPY data/ ./data/
 
 # ── 3. Train model during build (self-contained image) ──
-# Use --overwrite to ensure fresh model; model saved to app/ml/model/
-RUN python -m app.ml.train --overwrite
+# TODO(US-4): Re-enable after app.ml.train module is implemented
+# RUN python -m app.ml.train --overwrite
+# For now, create placeholder model directory
+RUN mkdir -p app/ml/model
 
 # ── 4. Ensure app package is importable from /app ──
 ENV PYTHONPATH=/app
