@@ -77,8 +77,13 @@ jobs:
             set -e
             cd '$DEPLOY_DIR'
 
-            # Stop old container first
+            # Remove all old containers on target ports
+            for p in 8888 8889 8890 8891 8892 8893 8894; do
+              cid=\$(docker ps -q --filter "publish=\$p" 2>/dev/null)
+              [ -n \"\$cid\" ] && docker rm -f \$cid 2>/dev/null || true
+            done
             docker rm -f banksys_sy_cuibowen 2>/dev/null || true
+            sleep 1
 
             # Build image
             echo '>> Building Docker image...'
