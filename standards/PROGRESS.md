@@ -8,33 +8,36 @@
 
 ## 当前状态 (最后更新: 2026-08-02 · by AI)
 
-- **阶段**: `第①步 — 项目规范文档已填写，等待人工确认后进入建仓`
-- **开发策略**: 按六步交付流程逐模块推进，先 US-1 建仓通 CI/CD，再依次实现 US-2~US-8
-- **上一步完成**: 已填写 `standards/00-project-context.md`、`standards/01-requirements.md`、`standards/PROGRESS.md`
-- **下一步**: 人工确认规范文档 → 第①步：创建 GitHub 仓库 `banksys_sy_cuibowen` + 配置 Secrets
-- **阻塞项**: 等待人工确认文档内容
+- **阶段**: `✋ 确认门 5 — PR #1 CI 全绿，等待人工 Review + Merge`
+- **仓库**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen（PUBLIC）
+- **PR**: https://github.com/thiyfrxd-cyber/banksys_sy_cuibowen/pull/1
+- **CI**: ✅ 全绿（ruff format / ruff check / pytest 10 passed / docker build）
+- **开发策略**: 按六步交付流程逐模块推进
+- **上一步完成**: 
+  - ①~⑤ 全部完成（建仓 → 分支 → 开发 → 本地自检 → PR → CI 绿）
+- **下一步**: **人工 Review + Merge**（AI 不得自行合并）→ CD 自动部署 → 验证端口 8888 健康检查
+- **阻塞项**: 等待人工审核合并
 
 ---
 
 ## 待办清单 (TODO，按优先级)
 
 ### 第一批：初始化项目工程化与 CI/CD（US-1）
-- [ ] ① 建仓 `banksys_sy_cuibowen`（开源仓库）+ 配 GitHub Secrets（SSH_PRIVATE_KEY / SSH_HOST / SSH_USER）
-- [ ] ② 开 feature 分支 `feature/1-init-project`
-- [ ] ③ 本地模块化开发：
-  - [ ] 创建项目骨架（目录结构、__init__.py）
-  - [ ] 编写 `requirements.txt`（streamlit / pandas / scikit-learn）
-  - [ ] 编写 `requirements-dev.txt`（pytest / pytest-cov / ruff）
-  - [ ] 编写 `pyproject.toml`（ruff 配置）
-  - [ ] 编写 `.gitignore`（含 `app/ml/model/`）
-  - [ ] 编写 `app/main.py`（Streamlit 入口 + 首页导航）
-  - [ ] 编写 `Dockerfile`（python:3.11-slim，构建时训练模型，HEALTHCHECK 用 Python）
-  - [ ] 编写 `.github/workflows/ci.yml`（ruff + pytest + docker build）
-  - [ ] 编写 `.github/workflows/cd.yml`（SSH 部署 + 健康检查 + 端口 8888）
-  - [ ] 编写初始测试 `tests/test_health.py`
-- [ ] ④ 本地 CI 自检（ruff + pytest + 覆盖率）
-- [ ] ⑤ 推送分支 + 创建 PR
-- [ ] ⑥ 人工 Review → 合并 → CD 自动部署 → 验证端口 8888 健康检查
+- [x] ① 建仓 `banksys_sy_cuibowen`（PUBLIC 开源仓库）+ 配 GitHub Secrets（SSH_PRIVATE_KEY / SSH_HOST / SSH_USER）
+- [x] ② 开 feature 分支 `feature/1-init-project`
+- [x] ③ 本地模块化开发（15 个文件）：
+  - [x] 包初始化（app/__init__.py, app/utils/, app/pages/, app/models/, app/ml/）
+  - [x] requirements.txt + requirements-dev.txt
+  - [x] pyproject.toml（ruff + pytest + coverage 配置）
+  - [x] .gitignore（含 app/ml/model/）
+  - [x] app/main.py（Streamlit 首页导航）
+  - [x] Dockerfile（python:3.11-slim，构建时训练模型，Python HEALTHCHECK）
+  - [x] .github/workflows/ci.yml（ruff + pytest + docker build）
+  - [x] .github/workflows/cd.yml（SSH 部署 + 端口 8888 + 健康检查）
+  - [x] tests/test_health.py（10 个测试）+ conftest.py
+- [x] ④ 本地 CI 自检全绿（ruff format ✅ / ruff check ✅ / pytest 10/10 passed）
+- [x] ⑤ PR #1 已创建
+- [ ] ⑥ CI 全绿 → 人工 Review → 人工 Merge → CD 部署 → 验证端口 8888
 
 ### 第二批：数据加载与预处理模块（US-2）
 - [ ] 实现 `app/models/data_loader.py`
@@ -84,7 +87,11 @@
 
 ## 已知坑 (GOTCHAS)
 
-> 暂无。开发过程中遇到的实际故障将记录于此，包含现象、根因、解决方案、验证结果。
+- **坑-001**: Docker 构建时 `No module named app.ml.train`（已修复）
+  - 现象: CI docker build 失败，`/usr/local/bin/python: No module named app.ml.train`
+  - 根因: Dockerfile 写死了 `RUN python -m app.ml.train --overwrite`，但 US-1 阶段训练模块尚未实现（US-4 才做）
+  - 解决: 暂时注释训练步骤，改为 `RUN mkdir -p app/ml/model` 占位；US-4 实现后恢复
+  - 验证: CI docker build 成功（run 30741490568）
 
 ---
 
